@@ -158,7 +158,7 @@ public class DsClient {
         var jobSubmission = new JobSubmission(resp);
         cSendLine(jobSubmission.Gets());
         resp=reader.readLine();
-        String[] command= resp.split(" ");
+        String[] command= resp.split("\\s+");
         int msgCount = Integer.parseInt(command[1]);
         cSendLine(Commands.OK.getDescription());
 

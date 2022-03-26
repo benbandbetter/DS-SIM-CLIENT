@@ -3,3 +3,4 @@
 2022-03-23 Implement AllToLarge algorithm
 2022-03-23 Add Largest-Round-Robin algorithm
 2022-03-25 Separate each class or enum into individual file
+2022-03-26 Add LaTex format report
