@@ -134,7 +134,7 @@ public class DsClient {
                 serversList.add(serverType);
             }
             Collections.sort(serversList, Comparator.comparing(ServerType::getCores).reversed());
-            serversList.forEach(System.out::println);
+            //serversList.forEach(System.out::println);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,11 +145,18 @@ public class DsClient {
      *  jobSchedule algorithmMode
      *  LRR or ATL
      */
-    public void jobSchedule(JobSubmission jobSubmission) throws Exception {
+    public void jobSchedule(JobSubmission jobSubmission, List<ServerStatus> lServer ) throws Exception {
         if (algorithmMode.equalsIgnoreCase("LRR")) {
-            cSendLine(Commands.SCHD.getDescription() + " " + jobSubmission.jobID + " " +
-                    serversList.get(0).type + " "+serverIndex_LRR);
-            if(++serverIndex_LRR >= serversList.get(0).limit){
+            if(serverIndex_LRR >= lServer.size()){
+                serverIndex_LRR=0;
+            }
+            //SCHD 0 t2.aws 0
+            String sendString = Commands.SCHD.getDescription() + " " + jobSubmission.jobID + " " +
+                    lServer.get(serverIndex_LRR).type + " "+lServer.get(serverIndex_LRR).serverID;
+            //System.out.println(sendString);
+            cSendLine(sendString);
+
+            if(++serverIndex_LRR >= lServer.size()){
                 serverIndex_LRR=0;
             }
         } else {
@@ -176,15 +183,21 @@ public class DsClient {
                                                     //t1.medium 0 inactive -1 4 16000 64000 0 0
                                                     //t1.medium 1 inactive -1 4 16000 64000 0 0
                                                     //t2.aws 0 inactive -1 16 64000 512000 0 0
+        List<ServerStatus> lServer = new ArrayList<ServerStatus>();
         for(int i=0 ; i<msgCount; ++i) {
             resp = reader.readLine();
             var serverStatus = new ServerStatus(resp);
+            // check how many largestServer are available, from the info of GET
+            // add all the largestServer to Arraylist
+            if(serverStatus.type.equals(serversList.get(0).type)){
+                lServer.add(serverStatus);
+            }
             //System.out.println(serverStatus);
         }
         cSendLine(Commands.OK.getDescription());    // OK
 
         resp=reader.readLine();                     // .
-        jobSchedule(jobSubmission);                 // SCHD 0 t2.aws 0
+        jobSchedule(jobSubmission, lServer);        // SCHD 0 t2.aws 0
         resp=reader.readLine();                     // OK
     }
 
