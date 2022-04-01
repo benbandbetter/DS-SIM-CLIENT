@@ -1,3 +1,4 @@
+
 public enum Commands {
     HELO("HELO"),    //Initial message from client
     AUTH("AUTH"),    //Authentication information

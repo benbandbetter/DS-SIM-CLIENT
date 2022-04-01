@@ -1,3 +1,10 @@
+
+//Receive the entire server state information from ds-server
+//input:
+//  t1.micro 1 inactive -1 2 4000 16000 0 0
+//ouput:
+//  type:t1.micro,serverID:0,state:inactive,curStartTime:-1,cores:2,memory:4000,disk:16000,wJobs:0,rJobs:0
+
 public class ServerStatus {
     String type;
     int serverID;

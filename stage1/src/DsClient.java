@@ -11,7 +11,7 @@ import java.util.*;
 
 
 public class DsClient {
-
+    // default setup
     Statement state = Statement.INIT;
     String serverIP = "localhost";    // localhost 10.0.0.137
     int serverPort = 50000;
@@ -33,7 +33,9 @@ public class DsClient {
     }
 
     /*
-     *  process argument get serverIP and serverPort
+     *  process argument get serverIP, serverPort, algorithmMode.
+     *  command example:
+     *      java DsClient localhost 50000 lrr
      */
     public void processArgument(String[] argument) {
         if (argument.length != 3) {
@@ -138,6 +140,11 @@ public class DsClient {
         }
     }
 
+
+    /*
+     *  jobSchedule algorithmMode
+     *  LRR or ATL
+     */
     public void jobSchedule(JobSubmission jobSubmission) throws Exception {
         if (algorithmMode.equalsIgnoreCase("LRR")) {
             cSendLine(Commands.SCHD.getDescription() + " " + jobSubmission.jobID + " " +
@@ -156,23 +163,31 @@ public class DsClient {
      */
     public void processJob(DsClient dsClient, String resp) throws Exception {
         var jobSubmission = new JobSubmission(resp);
-        cSendLine(jobSubmission.Gets());
-        resp=reader.readLine();
+        cSendLine(jobSubmission.Gets());            // GETS Capable 1 700 600
+        resp=reader.readLine();                     // DATA 7 124
         String[] command= resp.split("\\s+");
         int msgCount = Integer.parseInt(command[1]);
-        cSendLine(Commands.OK.getDescription());
+        cSendLine(Commands.OK.getDescription());    // OK
 
+                                                    //t1.micro 0 inactive -1 2 4000 16000 0 0
+                                                    //t1.micro 1 inactive -1 2 4000 16000 0 0
+                                                    //t1.small 0 inactive -1 2 8000 32000 0 0
+                                                    //t1.small 1 inactive -1 2 8000 32000 0 0
+                                                    //t1.medium 0 inactive -1 4 16000 64000 0 0
+                                                    //t1.medium 1 inactive -1 4 16000 64000 0 0
+                                                    //t2.aws 0 inactive -1 16 64000 512000 0 0
         for(int i=0 ; i<msgCount; ++i) {
             resp = reader.readLine();
             var serverStatus = new ServerStatus(resp);
             //System.out.println(serverStatus);
         }
-        cSendLine(Commands.OK.getDescription());
+        cSendLine(Commands.OK.getDescription());    // OK
 
-        resp=reader.readLine();
-        jobSchedule(jobSubmission);
-        resp=reader.readLine();
+        resp=reader.readLine();                     // .
+        jobSchedule(jobSubmission);                 // SCHD 0 t2.aws 0
+        resp=reader.readLine();                     // OK
     }
+
     /*
      *  Main loop
      */
@@ -189,7 +204,7 @@ public class DsClient {
                     break;
                 case AUTHENTICATION:
                     if (resp.equalsIgnoreCase(Commands.OK.getDescription())) {
-                        cSendLine(Commands.AUTH.getDescription() + System.getProperty("user.name"));
+                        cSendLine(Commands.AUTH.getDescription() +" "+ System.getProperty("user.name"));
                         state = Statement.AUTHENTICATED;
                     } else {
                         state = Statement.QUIT;
@@ -249,7 +264,7 @@ public class DsClient {
             }
             if(readline_Flag) {
                 resp = cReadLine(packetTimeout, reader);
-                System.out.println("RX>>> " + resp);
+                //System.out.println("RX>>> " + resp);
             } else {
                 readline_Flag = true;
             }

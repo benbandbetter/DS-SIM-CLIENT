@@ -1,3 +1,9 @@
+
+//        Receive a job submitted by the ds-server
+//        JOBN 32 0 47066 1 700 600
+//        After format with JobSubmission class.
+//        type:JOBN,submitTime:32,jobID:0,estRuntime:47066,cores:1,memory:700,disk:600
+
 public class JobSubmission {
     String type;
     int submitTime;
