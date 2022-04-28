@@ -23,7 +23,7 @@ public class DsClient {
     BufferedWriter writer = null;
     BufferedReader reader = null;
     int serverIndex_LRR = 0;
-    String algorithmMode = "LRR";
+    String algorithmMode = "FC";
 
     /*
      *  Main
@@ -42,6 +42,8 @@ public class DsClient {
     public void processArgument(String[] argument) {
         if (argument.length != 3) {
             System.out.println("Running default setup");
+            System.out.println("Running with server:" + serverIP + " port:" + serverPort+ " Mode:" + algorithmMode);
+
         } else {
             serverIP = argument[0];
             serverPort = Integer.parseInt(argument[1]);
@@ -173,6 +175,12 @@ public class DsClient {
      */
     public void jobSchedule(JobSubmission jobSubmission, List<ServerStatus> lServer ) throws Exception {
         switch (algorithmMode) {
+            case "FC":
+                System.out.println("====Sort FC====");
+                System.out.println(lServer.get(0));
+                cSendLine(Commands.SCHD.getDescription() + " " + jobSubmission.jobID + " " +
+                        lServer.get(0).type + " 0");
+                break;
             case "LRR":
                 //Collections.sort(lServer, Comparator.comparing(ServerStatus::getCores).reversed());
                 //System.out.println("====Sort LRR====");
