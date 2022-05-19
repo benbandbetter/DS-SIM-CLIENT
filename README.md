@@ -5,7 +5,9 @@ Usage
 
 ./demoS1.sh DsClient.class -n
 
+Usage for stage2
 
+./stage2-test-x86 "java DsClient" -o tt -n
 
 
 2022-03-11 workshop w3 base TCP/UDP Sever/Client code
@@ -27,3 +29,5 @@ Usage
 2022-05-19 Add algorithm FC FF, BF, WF in workshop9
 
 2022-05-19 Add algorithm TT in workshop11
+
+2022-05-19 Add stage2, refactor code, add comment
