@@ -418,13 +418,13 @@ public class DsClient {
             );
         });
 
-        ArrayList<ServerStatus> tempLServerS =(ArrayList<ServerStatus>) tempLServer.stream().sorted(
+        tempLServer =(ArrayList<ServerStatus>) tempLServer.stream().sorted(
                         Comparator.comparing(ServerStatus::getWjobs).thenComparing(ServerStatus::getCores)).
-                collect(Collectors.toList());
+                        collect(Collectors.toList());
 //                    System.out.println("====Sort TT-cpu and wait job ====");
 //                    tempLServer.forEach(System.out::println);
-        if (tempLServerS.size() > 0) {
-            bestServer = tempLServerS.get(0);
+        if (tempLServer.size() > 0) {
+            bestServer = tempLServer.get(0);
         } else {
 //          System.out.println("No resource available #############");
         }
