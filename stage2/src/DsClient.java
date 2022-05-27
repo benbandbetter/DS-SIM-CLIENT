@@ -414,12 +414,12 @@ public class DsClient {
         ArrayList<ServerStatus> tempLServer = new ArrayList<ServerStatus>(lServer);
         tempLServer.removeIf((server) -> {
             return (server.cores < jobSubmission.cores ||
+                    server.state.equals(ServerStatus.INACTIVE) || server.state.equals(ServerStatus.BOOTING) ||
                     server.disk < jobSubmission.disk || server.memory < jobSubmission.memory
             );
         });
-
         tempLServer =(ArrayList<ServerStatus>) tempLServer.stream().sorted(
-                        Comparator.comparing(ServerStatus::getWjobs).thenComparing(ServerStatus::getCores)).
+                        Comparator.comparing(ServerStatus::getWjobs).thenComparing(ServerStatus::getCores).reversed()).
                         collect(Collectors.toList());
 //                    System.out.println("====Sort TT-cpu and wait job ====");
 //                    tempLServer.forEach(System.out::println);
